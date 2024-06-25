@@ -5,8 +5,8 @@ import subprocess
 
 def preprocess_header():
     # cpp -dM -I /usr/include/bind9 /usr/include/bind9/dns/result.h > out.h
-    cpp = subprocess.Popen(["cpp", "-dM", "-I", "/usr/include/bind9", "/usr/include/bind9/dns/name.h"],
-            stdout=subprocess.PIPE)
+    cpp = subprocess.Popen(["cpp", "-DHAVE_STDATOMIC_H", "-dM", "-I", "/usr/include/bind9", "/usr/include/bind9/dns/name.h"],
+            stdout=subprocess.PIPE, text=True)
     output, stderr = cpp.communicate()
     if cpp.returncode != 0:
         raise ValueError("cpp failed")
@@ -44,8 +44,8 @@ main (int argc, char ** argv) {
     return c_prog
 
 def c_compile(source_fn, out_fn):
-    gcc = subprocess.Popen(["gcc", "-I/usr/include/bind9", "-o", "dict_generator", source_fn],
-            stdout=subprocess.PIPE)
+    gcc = subprocess.Popen(["gcc", "-DHAVE_STDATOMIC_H", "-I/usr/include/bind9", "-o", "dict_generator", source_fn],
+            stdout=subprocess.PIPE, text=True)
     output, stderr = gcc.communicate()
     if gcc.returncode != 0:
         raise ValueError("gcc failed")
@@ -54,7 +54,7 @@ def c_compile(source_fn, out_fn):
 def gen_dict(binary_fn, out_fn):
     with open(out_fn, "w") as output_f:
         gen = subprocess.Popen(["./" + binary_fn],
-                stdout=subprocess.PIPE)
+                stdout=subprocess.PIPE, text=True)
         output, stderr = gen.communicate()
         if gen.returncode != 0:
             raise ValueError("dict generator failed")

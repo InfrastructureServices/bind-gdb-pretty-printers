@@ -6,7 +6,7 @@ import subprocess
 def preprocess_header():
     # cpp -dM -I /usr/include/bind9 /usr/include/bind9/dns/enumtype.h > out.h
     cpp = subprocess.Popen(["cpp", "-dM", "-I", "/usr/include/bind9", "/usr/include/bind9/dns/enumtype.h"],
-            stdout=subprocess.PIPE)
+            stdout=subprocess.PIPE, text=True)
     output, stderr = cpp.communicate()
     if cpp.returncode != 0:
         raise ValueError("cpp failed")
@@ -46,7 +46,7 @@ main (int argc, char ** argv) {
 
 def c_compile(source_fn, out_fn):
     gcc = subprocess.Popen(["gcc", "-I/usr/include/bind9", "-o", "dict_generator", source_fn],
-            stdout=subprocess.PIPE)
+            stdout=subprocess.PIPE, text=True)
     output, stderr = gcc.communicate()
     if gcc.returncode != 0:
         raise ValueError("gcc failed")
