@@ -3,9 +3,14 @@
 import re
 import subprocess
 
+CFLAGS = ["-I/usr/include/bind9", "-DHAVE_STDATOMIC_H"]
+
 def preprocess_header():
     # cpp -dM -I /usr/include/bind9 /usr/include/bind9/dns/enumclass.h > out.h
-    cpp = subprocess.Popen(["cpp", "-dM", "-I", "/usr/include/bind9", "/usr/include/bind9/dns/enumclass.h"],
+    cmd = ["cpp", "-dM"]
+    cmd.extend(CFLAGS)
+    cmd.append("/usr/include/bind9/dns/enumclass.h")
+    cpp = subprocess.Popen(cmd,
             stdout=subprocess.PIPE, text=True)
     output, stderr = cpp.communicate()
     if cpp.returncode != 0:
@@ -45,7 +50,10 @@ main (int argc, char ** argv) {
     return c_prog
 
 def c_compile(source_fn, out_fn):
-    gcc = subprocess.Popen(["gcc", "-I/usr/include/bind9", "-o", "dict_generator", source_fn],
+    cmd = ["gcc"]
+    cmd.extend(CFLAGS)
+    cmd.extend(["-o", "dict_generator", source_fn])
+    gcc = subprocess.Popen(cmd,
             stdout=subprocess.PIPE, text=True)
     output, stderr = gcc.communicate()
     if gcc.returncode != 0:
@@ -55,7 +63,7 @@ def c_compile(source_fn, out_fn):
 def gen_dict(binary_fn, out_fn):
     with open(out_fn, "w") as output_f:
         gen = subprocess.Popen(["./" + binary_fn],
-                stdout=subprocess.PIPE)
+                stdout=subprocess.PIPE, text=True)
         output, stderr = gen.communicate()
         if gen.returncode != 0:
             raise ValueError("dict generator failed")
