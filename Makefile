@@ -1,4 +1,4 @@
-GENERATED=dns_name dns_rdataclass dns_rdatatype
+GENERATED=dns_name dns_rdataclass dns_rdatatype isc_result
 
 all: gen_dirs
 

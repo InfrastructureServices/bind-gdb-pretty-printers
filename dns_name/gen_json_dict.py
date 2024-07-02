@@ -3,10 +3,14 @@
 import re
 import subprocess
 
+CFLAGS = ["-DHAVE_STDATOMIC_H", "-I/usr/include/bind9"]
+
 def preprocess_header():
     # cpp -dM -I /usr/include/bind9 /usr/include/bind9/dns/result.h > out.h
-    cpp = subprocess.Popen(["cpp", "-DHAVE_STDATOMIC_H", "-dM", "-I", "/usr/include/bind9", "/usr/include/bind9/dns/name.h"],
-            stdout=subprocess.PIPE, text=True)
+    cmd = ["cpp", "-dM"]
+    cmd.extend(CFLAGS)
+    cmd.append("/usr/include/bind9/dns/name.h")
+    cpp = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)
     output, stderr = cpp.communicate()
     if cpp.returncode != 0:
         raise ValueError("cpp failed")
@@ -44,8 +48,10 @@ main (int argc, char ** argv) {
     return c_prog
 
 def c_compile(source_fn, out_fn):
-    gcc = subprocess.Popen(["gcc", "-DHAVE_STDATOMIC_H", "-I/usr/include/bind9", "-o", "dict_generator", source_fn],
-            stdout=subprocess.PIPE, text=True)
+    cmd = ["gcc"]
+    cmd.extend(CFLAGS)
+    cmd.extend(["-o", "dict_generator", source_fn])
+    gcc = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)
     output, stderr = gcc.communicate()
     if gcc.returncode != 0:
         raise ValueError("gcc failed")
