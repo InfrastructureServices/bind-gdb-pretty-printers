@@ -9,7 +9,8 @@ RED = 0
 BLACK = 1
 
 def gdb_printer_decorator(fn):
-    gdb.pretty_printers.append(fn)
+    if __name__ == '__main__':
+        gdb.pretty_printers.append(fn)
     return fn
 
 def NAMELEN(node):
@@ -127,6 +128,9 @@ class RBTPrinter(object):
 # register pretty printers
 @gdb_printer_decorator
 def dns_rbt_printer(val):
-    if str(val.type) == 'dns_rbt_t':
+    if str(val.type) == 'dns_rbt_t' or str(val.type) == 'const dns_rbt_t':
         return RBTPrinter(val)
     return None
+
+def register_printers(objfile):
+    objfile.pretty_printers.append(dns_rbt_printer)

@@ -5,7 +5,8 @@ import json
 import dns.name # python-dns
 
 def gdb_printer_decorator(fn):
-    gdb.pretty_printers.append(fn)
+    if __name__ == '__main__':
+        gdb.pretty_printers.append(fn)
     return fn
 
 class DNSNamePrinter(object):
@@ -62,6 +63,10 @@ _dnsattr_dict = json.load(open(dict_fn))
 # register pretty printers
 @gdb_printer_decorator
 def dns_name_printer(val):
-    if str(val.type) == 'dns_name_t':
+    if str(val.type) == 'dns_name_t' or str(val.type) == 'const dns_name_t':
         return DNSNamePrinter(val)
     return None
+
+def register_printers(objfile):
+    objfile.pretty_printers.append(dns_name_printer)
+

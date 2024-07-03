@@ -5,7 +5,8 @@ import json
 
 
 def gdb_printer_decorator(fn):
-    gdb.pretty_printers.append(fn)
+    if __name__ == '__main__':
+        gdb.pretty_printers.append(fn)
     return fn
 
 class ISCResultPrinter(object):
@@ -28,3 +29,8 @@ def isc_result_printer(val):
     if str(val.type) == 'isc_result_t':
         return ISCResultPrinter(val)
     return None
+
+def register_printers(objfile):
+    objfile.pretty_printers.append(isc_result_printer)
+
+

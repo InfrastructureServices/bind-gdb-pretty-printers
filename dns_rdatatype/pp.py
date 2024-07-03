@@ -5,7 +5,8 @@ import json
 
 
 def gdb_printer_decorator(fn):
-    gdb.pretty_printers.append(fn)
+    if __name__ == '__main__':
+        gdb.pretty_printers.append(fn)
     return fn
 
 class DNSRdataTypePrinter(object):
@@ -28,3 +29,6 @@ def dns_rdatatype_printer(val):
     if str(val.type) == 'dns_rdatatype_t':
         return DNSRdataTypePrinter(val)
     return None
+
+def register_printers(objfile):
+    objfile.pretty_printers.append(dns_rdatatype_printer)
