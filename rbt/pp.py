@@ -3,6 +3,7 @@ import sys
 import json
 
 import dns.name # python-dns
+import gdb
 
 NULL = 0
 RED = 0

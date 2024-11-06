@@ -4,8 +4,10 @@ import os
 import sys
 import gdb
 
-script_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(script_dir)
+
+if __name__ == '__main__':
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    sys.path.append(script_dir)
 
 # https://sourceware.org/gdb/current/onlinedocs/gdb.html/Writing-a-Pretty_002dPrinter.html
 objfile = gdb.current_objfile() or gdb
